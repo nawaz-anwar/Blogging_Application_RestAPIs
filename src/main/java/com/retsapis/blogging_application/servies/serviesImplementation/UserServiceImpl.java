@@ -1,6 +1,7 @@
 package com.retsapis.blogging_application.servies.serviesImplementation;
 
 import com.retsapis.blogging_application.entities.User;
+import com.retsapis.blogging_application.exception.ResourceNotFoundException;
 import com.retsapis.blogging_application.payloads.UserDto;
 import com.retsapis.blogging_application.repository.UserRepo;
 import com.retsapis.blogging_application.servies.UserService;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -28,21 +30,40 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(UserDto userDto, Integer userId) {
-        return null;
+        User user = this.userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", " Id ", userId));
+
+        user.setUserName(userDto.getUserName());
+        user.setUserEmail(userDto.getUserEmail());
+        user.setUserPassword(userDto.getUserPassword());
+        user.setUserAbout(userDto.getUserAbout());
+
+        User updatedUser = this.userRepo.save(user);
+        UserDto userDto1 = this.userToDto(updatedUser);
+        return userDto1;
     }
 
     @Override
     public UserDto getUserById(Integer userId) {
-        return null;
+        User user = this.userRepo.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User","Id", userId));
+        return this.userToDto(user);
     }
 
     @Override
     public List<UserDto> getAllUsers() {
-        return null;
+        List<User> users = this.userRepo.findAll();
+        List<UserDto> userDtos = users.stream().map(user -> this.userToDto(user)).collect(Collectors.toList());
+        return userDtos;
     }
 
     @Override
     public void deleteUser(Integer userId) {
+
+        User user =  this.userRepo.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User", "Id", userId));
+
+        this.userRepo.delete(user);
 
     }
 
