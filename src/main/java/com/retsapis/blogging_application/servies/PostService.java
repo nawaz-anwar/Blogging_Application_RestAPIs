@@ -1,6 +1,7 @@
 package com.retsapis.blogging_application.servies;
 
 import com.retsapis.blogging_application.payloads.PostDto;
+import com.retsapis.blogging_application.payloads.PostResponse;
 
 import java.util.List;
 
@@ -14,6 +15,9 @@ public interface PostService {
 
     //delete
     void deletePost(Integer postId);
+
+    //get all post
+    PostResponse getAllPost(Integer pageNumber,Integer pageSize,String sortBy,String sortDir);
 
     //get post by id
     PostDto getPostById(Integer postId);

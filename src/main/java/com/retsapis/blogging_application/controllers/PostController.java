@@ -1,7 +1,9 @@
 package com.retsapis.blogging_application.controllers;
 
+import com.retsapis.blogging_application.config.AppConstants;
 import com.retsapis.blogging_application.payloads.ApiResponse;
 import com.retsapis.blogging_application.payloads.PostDto;
+import com.retsapis.blogging_application.payloads.PostResponse;
 import com.retsapis.blogging_application.servies.PostService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ public class PostController {
         return new ResponseEntity<PostDto>(updatePostDto, HttpStatus.OK);
     }
 
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<PostDto>> getPostByUserId(@PathVariable Integer userId){
 
@@ -50,6 +53,24 @@ public class PostController {
         List<PostDto> postDto = this.postService.getPostByCategory(categoryId);
 
         return new ResponseEntity<>(postDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/posts")
+    public ResponseEntity<PostResponse> getAllPost(
+            @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir) {
+
+        PostResponse postResponse = this.postService.getAllPost(pageNumber, pageSize, sortBy, sortDir);
+        return new ResponseEntity<PostResponse>(postResponse, HttpStatus.OK);
+    }
+
+    // search
+    @GetMapping("/posts/search/{keywords}")
+    public ResponseEntity<List<PostDto>> searchPostByTitle(@PathVariable("keywords") String keywords) {
+        List<PostDto> result = this.postService.searchPost(keywords);
+        return new ResponseEntity<List<PostDto>>(result, HttpStatus.OK);
     }
 
     @DeleteMapping("/{postId}")
