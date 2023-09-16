@@ -9,13 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("comments")
+@RequestMapping("/comments")
 public class CommentController {
 
     @Autowired
     private CommentService commentService;
 
-    @PostMapping("/post/{postId}/comments")
+    @PostMapping("/post/{postId}")
     public ResponseEntity<CommentDto> createComment(@RequestBody CommentDto comment, @PathVariable Integer postId) {
 
         CommentDto createComment = this.commentService.createComment(comment, postId);
